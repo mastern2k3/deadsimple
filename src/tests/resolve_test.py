@@ -5,12 +5,12 @@ from deadsimple import Depends, resolve
 
 
 @dataclass
-class _TestDepA():
+class _TestDepA:
     dep_b: _TestDepB
 
 
 @dataclass
-class _TestDepB():
+class _TestDepB:
     value: str
 
 
@@ -30,7 +30,7 @@ def test_nested_dependencies():
 
 
 @dataclass
-class _TestDepC():
+class _TestDepC:
     dep_a: _TestDepA
     dep_b: _TestDepB
 
@@ -52,7 +52,7 @@ def test_single_instance_per_resolve():
 
 
 @dataclass
-class _MixedDep():
+class _MixedDep:
     dep_a: _TestDepA
     dep_default: Any
 
@@ -61,7 +61,10 @@ def _mixed_dep(always_none=None, dep_a: _TestDepA = Depends(_dep_a)) -> _MixedDe
     return _MixedDep(dep_default=always_none, dep_a=dep_a)
 
 
-def _mixed_dep_2(my_default: str ="default", dep_a: _TestDepA = Depends(_dep_a)) -> _MixedDep:
+def _mixed_dep_2(
+    my_default: str = "default",
+    dep_a: _TestDepA = Depends(_dep_a),
+) -> _MixedDep:
     return _MixedDep(dep_default=my_default, dep_a=dep_a)
 
 

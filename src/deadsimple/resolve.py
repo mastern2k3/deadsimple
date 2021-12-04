@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Depends():
+class Depends:
 
     factory: Callable
 

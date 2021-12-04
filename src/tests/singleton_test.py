@@ -4,12 +4,12 @@ from deadsimple import Depends, resolve
 
 
 @dataclass
-class Singleton():
+class Singleton:
     pass
 
 
 @dataclass
-class NotSingleton():
+class NotSingleton:
     singleton_dep: Singleton
 
 
