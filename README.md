@@ -59,4 +59,41 @@ assert my_c.dep_b is my_c.dep_a.dep_b
 ```
 
 
+For Singleton use [lru_cache] or [cache] from [functools]
+
+```python
+from functools import lru_cache
+# or from functools import cache if you're 3.9+
+
+
+@dataclass
+class Singleton():
+    pass
+
+
+@dataclass
+class NotSingleton():
+    singleton_dep: Singleton
+
+
+@lru_cache
+def get_singleton() -> Singleton:
+    return Singleton()
+
+
+def get_not_singleton(singleton: Singleton = Depends(get_singleton)) -> NotSingleton:
+    return NotSingleton(singleton_dep=singleton)
+
+
+not_singleton_a = resolve(get_not_singleton)
+not_singleton_b = resolve(get_not_singleton)
+
+assert not_singleton_a is not not_singleton_b
+assert not_singleton_a.singleton_dep is not_singleton_b.singleton_dep
+```
+
+
 [FastAPI]: https://github.com/tiangolo/fastapi
+[lru_cache]: https://docs.python.org/3/library/functools.html#functools.lru_cache
+[cache]: https://docs.python.org/3/library/functools.html#functools.cache
+[functools]: https://docs.python.org/3/library/functools.html
