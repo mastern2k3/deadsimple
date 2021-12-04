@@ -1,6 +1,6 @@
 # deadsimple
 
-A dependency injection library for python, aimed for the least amount of magic.
+> A dependency injection library for python, aimed for the least amount of magic.
 
 Heavily influenced by [FastAPI]'s dependency injection classes and logic.
 
@@ -90,6 +90,13 @@ not_singleton_b = resolve(get_not_singleton)
 
 assert not_singleton_a is not not_singleton_b
 assert not_singleton_a.singleton_dep is not_singleton_b.singleton_dep
+```
+
+
+## Installing
+
+```
+pip install deadsimple
 ```
 
 
