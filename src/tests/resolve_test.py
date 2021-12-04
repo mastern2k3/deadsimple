@@ -1,5 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from typing import Any
 from deadsimple import Depends, resolve
 
 
@@ -48,3 +49,30 @@ def test_single_instance_per_resolve():
 
     assert dep.dep_b.value == "some val"
     assert dep.dep_b is dep.dep_a.dep_b
+
+
+@dataclass
+class _MixedDep():
+    dep_a: _TestDepA
+    dep_default: Any
+
+
+def _mixed_dep(always_none=None, dep_a: _TestDepA = Depends(_dep_a)) -> _MixedDep:
+    return _MixedDep(dep_default=always_none, dep_a=dep_a)
+
+
+def _mixed_dep_2(my_default: str ="default", dep_a: _TestDepA = Depends(_dep_a)) -> _MixedDep:
+    return _MixedDep(dep_default=my_default, dep_a=dep_a)
+
+
+def test_mixed_defaults_without_depends():
+
+    dep = resolve(_mixed_dep)
+
+    assert dep.dep_a.dep_b.value == "some val"
+    assert dep.dep_default is None
+
+    dep = resolve(_mixed_dep_2)
+
+    assert dep.dep_a.dep_b.value == "some val"
+    assert dep.dep_default == "default"

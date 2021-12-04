@@ -1,5 +1,5 @@
 from typing import Callable, TypeVar, Any
-from inspect import signature
+from inspect import signature, Parameter
 from dataclasses import dataclass
 
 
@@ -24,7 +24,7 @@ def _resolve(factory: Callable[[Any], TReturn], context: dict) -> TReturn:
 
     for parameter in _signature.parameters.values():
 
-        if parameter.default is None:
+        if parameter.default is Parameter.empty:
             raise Exception("Factory with no default")
 
         if not isinstance(parameter.default, Depends):
