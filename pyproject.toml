@@ -1,8 +1,16 @@
 [tool.poetry]
 name = "deadsimple"
-version = "0.1.0"
-description = ""
-authors = ["Nitzan Zada"]
+version = "0.1.1"
+description = "A dependency injection library, aimed for the least amount of magic"
+authors = ["Nitzan Zada <nitzan.zada@gmail.com>"]
+keywords = ["dependency_injection"]
+readme = "README.md"
+license = "MIT"
+homepage = "https://github.com/mastern2k3/deadsimple"
+repository = "https://github.com/mastern2k3/deadsimple"
+include = [
+    "LICENSE",
+]
 packages = [
     { include = "deadsimple", from = "src" },
 ]
