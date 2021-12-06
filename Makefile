@@ -5,3 +5,9 @@ test:
 	. $(DIR)/venv/bin/activate; \
 	env PYTHONPATH=$(DIR)/src \
 	pytest
+
+
+benchmark:
+	. $(DIR)/venv/bin/activate; \
+	env PYTHONPATH=$(DIR)/src \
+	python $(DIR)/src/tests/benchmarks.py

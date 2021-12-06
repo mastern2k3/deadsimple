@@ -5,8 +5,10 @@ from dataclasses import dataclass
 
 @dataclass
 class Depends:
-
     factory: Callable
+
+
+_signature_cache = {}
 
 
 TReturn = TypeVar("TReturn")
@@ -18,7 +20,10 @@ def resolve(factory: Callable[[Any], TReturn], overrides: dict = {}) -> TReturn:
 
 def _resolve(factory: Callable[[Any], TReturn], context: dict) -> TReturn:
 
-    _signature = signature(factory)
+    _signature = _signature_cache.get(factory)
+    if _signature is None:
+        _signature = signature(factory)
+        _signature_cache[factory] = _signature
 
     dependencies = {}
 
