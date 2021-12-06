@@ -79,3 +79,11 @@ def test_mixed_defaults_without_depends():
 
     assert dep.dep_a.dep_b.value == "some val"
     assert dep.dep_default == "default"
+
+
+def test_resolve_with_overrides():
+
+    override_dep_b = _TestDepB(value="some other val")
+    dep = resolve(_dep_a, overrides={_dep_b: override_dep_b})
+
+    assert dep.dep_b.value == "some other val"

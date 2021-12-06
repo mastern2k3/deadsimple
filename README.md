@@ -32,7 +32,7 @@ def get_dep_a(dep_b: DepB = Depends(get_dep_b)) -> DepA:
 
 my_a = resolve(get_dep_a)
 
-assert my_a.dep_b == "some_val"
+assert my_a.dep_b.value == "some val"
 ```
 
 
@@ -92,6 +92,15 @@ assert not_singleton_a is not not_singleton_b
 assert not_singleton_a.singleton_dep is not_singleton_b.singleton_dep
 ```
 
+Override dependencies:
+
+```python
+override_dep_b = DepB(value="some other val")
+
+my_a = resolve(get_dep_a, overrides={get_dep_b: override_dep_b})
+
+assert my_a.dep_b.value == "some other val"
+```
 
 ## Installing
 

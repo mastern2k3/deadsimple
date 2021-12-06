@@ -12,8 +12,8 @@ class Depends:
 TReturn = TypeVar("TReturn")
 
 
-def resolve(factory: Callable[[Any], TReturn]) -> TReturn:
-    return _resolve(factory, {})
+def resolve(factory: Callable[[Any], TReturn], overrides: dict = {}) -> TReturn:
+    return _resolve(factory, overrides)
 
 
 def _resolve(factory: Callable[[Any], TReturn], context: dict) -> TReturn:
