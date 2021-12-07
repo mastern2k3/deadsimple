@@ -1,10 +1,8 @@
-from typing import Callable, TypeVar, Any
+from typing import Callable, TypeVar, Any, NamedTuple
 from inspect import signature, Parameter
-from dataclasses import dataclass
 
 
-@dataclass
-class Depends:
+class Depends(NamedTuple):
     factory: Callable
 
 
