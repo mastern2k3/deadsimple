@@ -6,7 +6,7 @@ class Depends(NamedTuple):
     factory: Callable
 
 
-_signature_cache = {}
+_resolver_cache = {}
 
 
 TReturn = TypeVar("TReturn")
@@ -18,33 +18,46 @@ def resolve(factory: Callable[[Any], TReturn], overrides: dict = {}) -> TReturn:
 
 def _resolve(factory: Callable[[Any], TReturn], context: dict) -> TReturn:
 
-    _signature = _signature_cache.get(factory)
-    if _signature is None:
-        _signature = signature(factory)
-        _signature_cache[factory] = _signature
+    _resolver = _resolver_cache.get(factory)
+    if _resolver is not None:
+        return _resolver(context)
 
-    dependencies = {}
+    _signature = signature(factory)
+
+    dependency_factories = []
 
     for parameter in _signature.parameters.values():
 
         if parameter.default is Parameter.empty:
-            raise Exception("Factory with no default")
+            raise Exception("Factory method missing default definition")
 
         if not isinstance(parameter.default, Depends):
             continue
 
         _depends: Depends = parameter.default
 
-        context_value = context.get(_depends.factory)
-        if context_value is not None:
+        dependency_factories.append((parameter.name, _depends.factory))
 
-            dependencies[parameter.name] = context_value
+    def _resolver(_context: dict):
 
-            continue
+        dependencies = {}
 
-        dependency = _resolve(_depends.factory, context)
+        for name, _factory in dependency_factories:
 
-        dependencies[parameter.name] = dependency
-        context[_depends.factory] = dependency
+            context_value = _context.get(_factory)
+            if context_value is not None:
 
-    return factory(**dependencies)
+                dependencies[name] = context_value
+
+                continue
+
+            dependency = _resolve(_factory, _context)
+
+            dependencies[name] = dependency
+            _context[_factory] = dependency
+
+        return factory(**dependencies)
+
+    _resolver_cache[factory] = _resolver
+
+    return _resolver(context)
