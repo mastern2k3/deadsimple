@@ -46,9 +46,7 @@ def _resolve(factory: Callable[[Any], TReturn], context: dict) -> TReturn:
 
             context_value = _context.get(_factory)
             if context_value is not None:
-
                 dependencies[name] = context_value
-
                 continue
 
             dependency = _resolve(_factory, _context)

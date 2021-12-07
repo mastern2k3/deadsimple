@@ -1,4 +1,5 @@
 from __future__ import annotations
+from functools import partial
 from dataclasses import dataclass
 from typing import Any
 from deadsimple import Depends, resolve
@@ -87,3 +88,14 @@ def test_resolve_with_overrides():
     dep = resolve(_dep_a, overrides={_dep_b: override_dep_b})
 
     assert dep.dep_b.value == "some other val"
+
+
+_partial_dep_c = partial(_dep_c, dep_b=_TestDepB("partial"))
+
+
+def test_partial_factory():
+
+    dep = resolve(_partial_dep_c)
+
+    assert dep.dep_a.dep_b.value == "some val"
+    assert dep.dep_b.value == "partial"
