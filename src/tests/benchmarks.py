@@ -22,9 +22,8 @@ def get_a(dep_b: TestClassB = Depends(get_b)) -> TestClassA:
     return TestClassA(dep_b)
 
 
-# @profile
 def get_a_hardcoded():
-    return TestClassA(get_b())
+    return get_a(get_b())
 
 
 def get_a_with_resolver():

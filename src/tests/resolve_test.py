@@ -99,3 +99,11 @@ def test_partial_factory():
 
     assert dep.dep_a.dep_b.value == "some val"
     assert dep.dep_b.value == "partial"
+
+
+def test_per_resolve_instantiation():
+
+    dep1 = resolve(_dep_a)
+    dep2 = resolve(_dep_a)
+
+    assert dep1.dep_b is not dep2.dep_b

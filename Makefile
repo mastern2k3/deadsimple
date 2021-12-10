@@ -11,3 +11,7 @@ benchmark:
 	. $(DIR)/venv/bin/activate; \
 	env PYTHONPATH=$(DIR)/src \
 	python $(DIR)/src/tests/benchmarks.py
+
+
+publish:
+	poetry publish --build

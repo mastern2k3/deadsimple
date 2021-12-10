@@ -12,7 +12,11 @@ _resolver_cache = {}
 TReturn = TypeVar("TReturn")
 
 
-def resolve(factory: Callable[[Any], TReturn], overrides: dict = {}) -> TReturn:
+def resolve(factory: Callable[[Any], TReturn], overrides: dict = None) -> TReturn:
+
+    if overrides is None:
+        overrides = {}
+
     return _resolve(factory, overrides)
 
 
