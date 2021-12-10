@@ -22,7 +22,7 @@ _resolver_cache = {}
 TReturn = TypeVar("TReturn")
 
 
-def resolve(factory: Callable[[Any], TReturn], overrides: dict = None) -> TReturn:
+def resolve(factory: Callable[..., TReturn], overrides: dict = None) -> TReturn:
 
     if overrides is not None:
         resolved_cache = overrides
@@ -72,7 +72,7 @@ def _close_open_generators(context: _Context, resolve_exception: Optional[Except
         )
 
 
-def _resolve(factory: Callable[[Any], TReturn], context: _Context) -> TReturn:
+def _resolve(factory: Callable[..., TReturn], context: _Context) -> TReturn:
 
     _resolver = _resolver_cache.get(factory)
     if _resolver is not None:
@@ -85,14 +85,15 @@ def _resolve(factory: Callable[[Any], TReturn], context: _Context) -> TReturn:
     for parameter in _signature.parameters.values():
 
         if parameter.default is Parameter.empty:
-            raise Exception("Factory method missing default definition")
+            raise ValueError(
+                "Factory method missing default definition. "
+                f"{parameter.name=} {factory=}"
+            )
 
         if not isinstance(parameter.default, Depends):
             continue
 
-        _depends: Depends = parameter.default
-
-        dependency_factories.append((parameter.name, _depends.factory))
+        dependency_factories.append((parameter.name, parameter.default.factory))
 
     is_generator = isgeneratorfunction(factory)
 
