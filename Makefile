@@ -10,7 +10,10 @@ test:
 benchmark:
 	. $(DIR)/venv/bin/activate; \
 	env PYTHONPATH=$(DIR)/src \
-	python $(DIR)/src/tests/benchmarks.py
+	python $(DIR)/src/tests/benchmarks.py resolver
+	. $(DIR)/venv/bin/activate; \
+	env PYTHONPATH=$(DIR)/src \
+	python $(DIR)/src/tests/benchmarks.py hardcoded
 
 
 publish:

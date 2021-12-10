@@ -1,4 +1,4 @@
-from timeit import Timer
+from timeit import Timer, main
 from dataclasses import dataclass
 
 from deadsimple import resolve, Depends
@@ -36,17 +36,33 @@ repeat = 5
 
 def run_with_resolver():
 
-    duration = Timer(get_a_hardcoded).repeat(number=times, repeat=repeat)
-    print(f"took {sum(duration) / repeat} hardcoded")
-    ms = ((sum(duration) / repeat) / times) * 1000
-    print(f"for {ms}ms each call")
-
-    print("================================")
-
     duration = Timer(get_a_with_resolver).repeat(number=times, repeat=repeat)
     print(f"took {sum(duration) / repeat} with resolver")
     ms = ((sum(duration) / repeat) / times) * 1000
     print(f"for {ms}ms each call")
 
 
-run_with_resolver()
+def run_hardcoded():
+
+    duration = Timer(get_a_hardcoded).repeat(number=times, repeat=repeat)
+    print(f"took {sum(duration) / repeat} hardcoded")
+    ms = ((sum(duration) / repeat) / times) * 1000
+    print(f"for {ms}ms each call")
+
+
+if __name__ == "__main__":
+
+    from sys import argv
+
+    if len(argv) <= 1:
+        run_hardcoded()
+        run_with_resolver()
+
+    elif argv[1] == "hardcoded":
+        run_hardcoded()
+
+    elif argv[1] == "resolver":
+        run_with_resolver()
+
+    else:
+        raise ValueError("Benchmarks can only be run for hardcoded or resolver")
