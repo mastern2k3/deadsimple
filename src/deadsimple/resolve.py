@@ -1,14 +1,16 @@
+from typing import Callable, Optional, TypeVar, Any
 from dataclasses import dataclass
-from typing import Callable, TypeVar, Any
 from inspect import signature, isgeneratorfunction, Parameter
 
+from .exceptions import GeneratorClosureException, InvalidGeneratorFactoryExcpetion
 
-@dataclass
+
+@dataclass(frozen=True)
 class Depends:
     factory: Callable
 
 
-@dataclass
+@dataclass(frozen=True)
 class _Context:
     resolved_cache: dict
     open_generators: list
@@ -32,20 +34,42 @@ def resolve(factory: Callable[[Any], TReturn], overrides: dict = None) -> TRetur
         open_generators=[],
     )
 
-    value = _resolve(factory, context)
+    resolve_exception = None
 
-    for open_generator in context.open_generators:
+    try:
+        value = _resolve(factory, context)
+    except Exception as ex:
+        resolve_exception = ex
+        raise
+    finally:
+        if len(context.open_generators) > 0:
+            _close_open_generators(context, resolve_exception)
+
+    return value
+
+
+def _close_open_generators(context: _Context, resolve_exception: Optional[Exception]):
+
+    exceptions = None
+
+    for open_generator in reversed(context.open_generators):
 
         try:
             next(open_generator)
-            raise Exception(
-                "Generator didn't close after one iteration. "
-                "(you might have more than one yield in your factory method)"
-            )
+            raise InvalidGeneratorFactoryExcpetion()
         except StopIteration:
             pass
+        except Exception as ex:
+            if exceptions is None:
+                exceptions = [ex]
+            else:
+                exceptions.append[ex]
 
-    return value
+    if exceptions is not None:
+        raise GeneratorClosureException(
+            resolve_exception=resolve_exception,
+            exceptions=exceptions,
+        )
 
 
 def _resolve(factory: Callable[[Any], TReturn], context: _Context) -> TReturn:
