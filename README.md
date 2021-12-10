@@ -102,6 +102,29 @@ my_a = resolve(get_dep_a, overrides={get_dep_b: override_dep_b})
 assert my_a.dep_b.value == "some other val"
 ```
 
+Generator factory methods:
+
+```python
+def get_dep_b() -> DepB:
+    print("enter b")
+    yield DepB(value="some val")
+    print("exit b")
+
+
+def get_dep_a(dep_b: DepB = Depends(get_dep_b)) -> DepA:
+    print("enter a")
+    yield DepA(dep_b=dep_b)
+    print("exit a")
+
+resolve(get_dep_a)
+
+# prints:
+# enter b
+# enter a
+# exit a
+# exit b
+```
+
 
 ## Installing
 
