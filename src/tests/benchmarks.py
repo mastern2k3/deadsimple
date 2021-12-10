@@ -36,17 +36,17 @@ repeat = 5
 
 def run_with_resolver():
 
-    duration = Timer(get_a_with_resolver).repeat(number=times, repeat=repeat)
-    print(f"took {sum(duration) / repeat} with resolver")
-    ms = ((sum(duration) / repeat) / times) * 1000
-    print(f"for {ms}ms")
-
-    print("================================")
-
     duration = Timer(get_a_hardcoded).repeat(number=times, repeat=repeat)
     print(f"took {sum(duration) / repeat} hardcoded")
     ms = ((sum(duration) / repeat) / times) * 1000
-    print(f"for {ms}ms")
+    print(f"for {ms}ms each call")
+
+    print("================================")
+
+    duration = Timer(get_a_with_resolver).repeat(number=times, repeat=repeat)
+    print(f"took {sum(duration) / repeat} with resolver")
+    ms = ((sum(duration) / repeat) / times) * 1000
+    print(f"for {ms}ms each call")
 
 
 run_with_resolver()
