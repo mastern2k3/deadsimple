@@ -36,16 +36,7 @@ class _LazyResolver(Generic[TLazyValue]):
 
     @property
     def lazy(self) -> TLazyValue:
-
-        context_value = self.context.resolved_cache.get(self.factory)
-        if context_value is not None:
-            return context_value
-
-        dependency = _resolve(self.factory, self.context)
-
-        self.context.resolved_cache[self.factory] = dependency
-
-        return dependency
+        return _resolve(self.factory, self.context)
 
 
 _resolver_cache: Dict[Callable, Callable[[_Context], Any]] = {}
@@ -131,6 +122,10 @@ def _resolve(factory: Callable[..., TReturn], context: _Context) -> TReturn:
 
     def _resolver(_context: _Context) -> TReturn:
 
+        context_value = _context.resolved_cache.get(factory)
+        if context_value is not None:
+            return context_value
+
         dependencies = {}
 
         for name, depends in dependency_factories:
@@ -142,15 +137,7 @@ def _resolve(factory: Callable[..., TReturn], context: _Context) -> TReturn:
                 )
                 continue
 
-            context_value = _context.resolved_cache.get(depends.factory)
-            if context_value is not None:
-                dependencies[name] = context_value
-                continue
-
-            dependency = _resolve(depends.factory, _context)
-
-            dependencies[name] = dependency
-            _context.resolved_cache[depends.factory] = dependency
+            dependencies[name] = _resolve(depends.factory, _context)
 
         value = factory(**dependencies)
 
@@ -158,6 +145,8 @@ def _resolve(factory: Callable[..., TReturn], context: _Context) -> TReturn:
 
             _context.open_generators.append(value)
             value = next(value)
+
+        _context.resolved_cache[factory] = value
 
         return value
 
