@@ -64,5 +64,19 @@ if __name__ == "__main__":
     elif argv[1] == "resolver":
         run_with_resolver()
 
+    elif argv[1] == "profile-resolver":
+        # warmup?
+        run_with_resolver()
+        from cProfile import run
+
+        run("run_with_resolver()")
+
+    elif argv[1] == "profile-hardcoded":
+        # warmup?
+        run_hardcoded()
+        from cProfile import run
+
+        run("run_hardcoded()")
+
     else:
         raise ValueError("Benchmarks can only be run for hardcoded or resolver")

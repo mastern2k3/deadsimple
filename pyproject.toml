@@ -15,6 +15,7 @@ packages = [
     { include = "deadsimple", from = "src" },
 ]
 
+
 [tool.poetry.dependencies]
 python = "^3.8"
 

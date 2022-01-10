@@ -5,8 +5,12 @@ from inspect import signature, isgeneratorfunction, Parameter
 from .exceptions import GeneratorClosureException, InvalidGeneratorFactoryExcpetion
 
 
+def Depends(factory: Callable) -> Any:
+    return _Depends(factory=factory)
+
+
 @dataclass(frozen=True)
-class Depends:
+class _Depends:
     factory: Callable
 
 
@@ -63,7 +67,7 @@ def _close_open_generators(context: _Context, resolve_exception: Optional[Except
             if exceptions is None:
                 exceptions = [ex]
             else:
-                exceptions.append[ex]
+                exceptions.append(ex)
 
     if exceptions is not None:
         raise GeneratorClosureException(
@@ -90,7 +94,7 @@ def _resolve(factory: Callable[..., TReturn], context: _Context) -> TReturn:
                 f"{parameter.name=} {factory=}"
             )
 
-        if not isinstance(parameter.default, Depends):
+        if not isinstance(parameter.default, _Depends):
             continue
 
         dependency_factories.append((parameter.name, parameter.default.factory))

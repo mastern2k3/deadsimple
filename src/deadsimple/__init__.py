@@ -5,7 +5,6 @@ from .exceptions import GeneratorClosureException, InvalidGeneratorFactoryExcpet
 __all__ = [
     "resolve",
     "Depends",
-
     "GeneratorClosureException",
     "InvalidGeneratorFactoryExcpetion",
 ]

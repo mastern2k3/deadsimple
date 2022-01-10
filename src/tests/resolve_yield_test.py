@@ -4,7 +4,12 @@ from unittest.mock import Mock, call
 
 from pytest import raises as pytest_raises
 
-from deadsimple import Depends, resolve, GeneratorClosureException, InvalidGeneratorFactoryExcpetion
+from deadsimple import (
+    Depends,
+    resolve,
+    GeneratorClosureException,
+    InvalidGeneratorFactoryExcpetion,
+)
 
 
 @dataclass
@@ -51,7 +56,6 @@ def test_enter_exit_called_for_immediate_yield_factories():
 
 
 def test_enter_exit_called_on_exception():
-
     class ExpectedException(Exception):
         pass
 
@@ -107,17 +111,18 @@ def test_enter_exit_called_on_exception_in_end():
 
 
 def test_two_yield_generator_factory_raise_excpetion():
-
     def get_dep_a() -> _TestDepA:
         yield _TestDepA(value="some value")
         yield None
 
     with pytest_raises(GeneratorClosureException) as closure_exception:
         dep = resolve(get_dep_a)
-    
+
     assert closure_exception.value.resolve_exception is None
     assert len(closure_exception.value.exceptions) == 1
-    assert isinstance(closure_exception.value.exceptions[0], InvalidGeneratorFactoryExcpetion)
+    assert isinstance(
+        closure_exception.value.exceptions[0], InvalidGeneratorFactoryExcpetion
+    )
 
 
 def test_nested_generator_factories_start_and_end_in_reverse():
