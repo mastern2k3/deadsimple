@@ -24,13 +24,44 @@ python = "^3.8"
 pytest = "^6.2.5"
 black = "^21.11b1"
 line-profiler = "^3.3.1"
-
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+pylint = "^2.12.2"
 
 
 [tool.black]
 line-length = 88
 include = '\.pyi?$'
+
+
+[tool.pylint.basic]
+max-line-length = 88
+
+
+[tool.pylint.message_control]
+disable = [
+    "arguments-differ",
+    "missing-class-docstring",
+    "missing-module-docstring",
+    "missing-function-docstring",
+    "redefined-outer-name",
+    "too-many-instance-attributes",
+    "too-many-arguments",
+    "too-many-locals",
+    "too-many-branches",
+    "too-many-statements",
+    "too-few-public-methods",
+    "too-many-public-methods",
+    "broad-except",
+    "redefined-builtin",
+    "duplicate-code",
+    "no-self-use",
+    "no-name-in-module",
+
+    "invalid-name",
+    "protected-access",
+    "logging-fstring-interpolation",
+]
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

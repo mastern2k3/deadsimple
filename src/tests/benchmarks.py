@@ -1,4 +1,4 @@
-from timeit import Timer, main
+from timeit import Timer
 from dataclasses import dataclass
 
 from deadsimple import resolve, Depends

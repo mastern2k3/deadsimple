@@ -1,4 +1,4 @@
-from typing import Callable, Optional, TypeVar, Any
+from typing import Callable, Dict, Optional, TypeVar, Any
 from dataclasses import dataclass
 from inspect import signature, isgeneratorfunction, Parameter
 
@@ -20,7 +20,7 @@ class _Context:
     open_generators: list
 
 
-_resolver_cache = {}
+_resolver_cache: Dict[Callable, Callable[[_Context], Any]] = {}
 
 
 TReturn = TypeVar("TReturn")
@@ -78,9 +78,9 @@ def _close_open_generators(context: _Context, resolve_exception: Optional[Except
 
 def _resolve(factory: Callable[..., TReturn], context: _Context) -> TReturn:
 
-    _resolver = _resolver_cache.get(factory)
-    if _resolver is not None:
-        return _resolver(context)
+    _cached_resolver = _resolver_cache.get(factory)
+    if _cached_resolver is not None:
+        return _cached_resolver(context)
 
     _signature = signature(factory)
 
@@ -101,7 +101,7 @@ def _resolve(factory: Callable[..., TReturn], context: _Context) -> TReturn:
 
     is_generator = isgeneratorfunction(factory)
 
-    def _resolver(_context: _Context):
+    def _resolver(_context: _Context) -> TReturn:
 
         dependencies = {}
 
@@ -120,6 +120,7 @@ def _resolve(factory: Callable[..., TReturn], context: _Context) -> TReturn:
         value = factory(**dependencies)
 
         if is_generator:
+
             _context.open_generators.append(value)
             value = next(value)
 

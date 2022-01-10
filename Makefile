@@ -7,6 +7,11 @@ test:
 	pytest
 
 
+lint:
+	black --check $(DIR)/src
+	pylint $(DIR)/src/*
+
+
 benchmark:
 	. $(DIR)/venv/bin/activate; \
 	env PYTHONPATH=$(DIR)/src \

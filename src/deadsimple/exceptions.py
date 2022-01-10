@@ -4,8 +4,8 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class GeneratorClosureException(Exception):
-    """Exception raised when one or more exceptions occur during the phase of closing open generator
-    factories (factory methods with yield).
+    """Exception raised when one or more exceptions occur during the phase of closing
+    open generator factories (factory methods with yield).
     """
 
     resolve_exception: Optional[Exception]
@@ -17,8 +17,8 @@ class GeneratorClosureException(Exception):
 
 @dataclass(frozen=True)
 class InvalidGeneratorFactoryExcpetion(Exception):
-    """Exception raised when a generator factory yields more than one time (has more than one
-    iteration).
+    """Exception raised when a generator factory yields more than one time (has more
+    than one iteration).
     """
 
     def __str__(self):

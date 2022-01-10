@@ -70,7 +70,7 @@ def test_enter_exit_called_on_exception():
         raise ExpectedException()
 
     with pytest_raises(ExpectedException):
-        dep = resolve(get_dep_b)
+        resolve(get_dep_b)
 
     assert mock.method_calls == [call.start(), call.end()]
 
@@ -103,7 +103,7 @@ def test_enter_exit_called_on_exception_in_end():
         raise dependency_exception
 
     with pytest_raises(GeneratorClosureException) as closure_exception:
-        dep = resolve(get_dep_b)
+        resolve(get_dep_b)
 
     assert mock.method_calls == [call.start(), call.end()]
     assert closure_exception.value.resolve_exception is dependency_exception
@@ -116,7 +116,7 @@ def test_two_yield_generator_factory_raise_excpetion():
         yield None
 
     with pytest_raises(GeneratorClosureException) as closure_exception:
-        dep = resolve(get_dep_a)
+        resolve(get_dep_a)
 
     assert closure_exception.value.resolve_exception is None
     assert len(closure_exception.value.exceptions) == 1
@@ -141,7 +141,7 @@ def test_nested_generator_factories_start_and_end_in_reverse():
 
     def get_dep_b(
         dep_a: _TestDepA = Depends(get_dep_a),
-        dep_c: _TestDepC = Depends(get_dep_c),
+        _dep_c: _TestDepC = Depends(get_dep_c),
     ) -> _TestDepB:
         mock.start_b()
         yield _TestDepB(dep_a=dep_a)
