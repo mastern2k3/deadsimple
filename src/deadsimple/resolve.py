@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Optional, TypeVar, Any
+from typing import Callable, Dict, Generic, Optional, TypeVar, Any
 from dataclasses import dataclass
 from inspect import signature, isgeneratorfunction, Parameter
 
@@ -6,18 +6,46 @@ from .exceptions import GeneratorClosureException, InvalidGeneratorFactoryExcpet
 
 
 def Depends(factory: Callable) -> Any:
-    return _Depends(factory=factory)
+    return _Depends(factory=factory, lazy=False)
+
+
+def Lazy(factory: Callable) -> Any:
+    return _Depends(factory=factory, lazy=True)
 
 
 @dataclass(frozen=True)
 class _Depends:
     factory: Callable
+    lazy: bool
 
 
 @dataclass(frozen=True)
 class _Context:
     resolved_cache: dict
     open_generators: list
+
+
+TLazyValue = TypeVar("TLazyValue")
+
+
+@dataclass
+class _LazyResolver(Generic[TLazyValue]):
+
+    factory: Callable[..., TLazyValue]
+    context: _Context
+
+    @property
+    def lazy(self) -> TLazyValue:
+
+        context_value = self.context.resolved_cache.get(self.factory)
+        if context_value is not None:
+            return context_value
+
+        dependency = _resolve(self.factory, self.context)
+
+        self.context.resolved_cache[self.factory] = dependency
+
+        return dependency
 
 
 _resolver_cache: Dict[Callable, Callable[[_Context], Any]] = {}
@@ -97,7 +125,7 @@ def _resolve(factory: Callable[..., TReturn], context: _Context) -> TReturn:
         if not isinstance(parameter.default, _Depends):
             continue
 
-        dependency_factories.append((parameter.name, parameter.default.factory))
+        dependency_factories.append((parameter.name, parameter.default))
 
     is_generator = isgeneratorfunction(factory)
 
@@ -105,17 +133,24 @@ def _resolve(factory: Callable[..., TReturn], context: _Context) -> TReturn:
 
         dependencies = {}
 
-        for name, _factory in dependency_factories:
+        for name, depends in dependency_factories:
 
-            context_value = _context.resolved_cache.get(_factory)
+            if depends.lazy:
+                dependencies[name] = _LazyResolver(
+                    factory=depends.factory,
+                    context=_context,
+                )
+                continue
+
+            context_value = _context.resolved_cache.get(depends.factory)
             if context_value is not None:
                 dependencies[name] = context_value
                 continue
 
-            dependency = _resolve(_factory, _context)
+            dependency = _resolve(depends.factory, _context)
 
             dependencies[name] = dependency
-            _context.resolved_cache[_factory] = dependency
+            _context.resolved_cache[depends.factory] = dependency
 
         value = factory(**dependencies)
 

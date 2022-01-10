@@ -120,9 +120,10 @@ def test_two_yield_generator_factory_raise_excpetion():
 
     assert closure_exception.value.resolve_exception is None
     assert len(closure_exception.value.exceptions) == 1
-    assert isinstance(
-        closure_exception.value.exceptions[0], InvalidGeneratorFactoryExcpetion
-    )
+
+    aggregated_exception = closure_exception.value.exceptions[0]
+
+    assert isinstance(aggregated_exception, InvalidGeneratorFactoryExcpetion)
 
 
 def test_nested_generator_factories_start_and_end_in_reverse():
