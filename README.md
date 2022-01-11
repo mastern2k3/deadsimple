@@ -116,6 +116,7 @@ def get_dep_a(dep_b: DepB = Depends(get_dep_b)) -> DepA:
     yield DepA(dep_b=dep_b)
     print("exit a")
 
+
 resolve(get_dep_a)
 
 # prints:
@@ -123,6 +124,29 @@ resolve(get_dep_a)
 # enter a
 # exit a
 # exit b
+```
+
+Lazy / optional resolution:
+
+```python
+from deadsimple import Lazy
+
+
+def get_dep_b() -> DepB:
+    print("enter b")
+    return DepB(value="some val")
+
+
+def get_dep_a(dep_b = Lazy(get_dep_b)) -> DepA:
+    print("enter a")
+    return DepA(dep_b=dep_b.lazy)
+
+
+resolve(get_dep_a)
+
+# prints:
+# enter a
+# enter b
 ```
 
 
