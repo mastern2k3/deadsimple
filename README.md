@@ -150,6 +150,13 @@ resolve(get_dep_a)
 ```
 
 
+## Todo
+
+- [x] Lazy resolution
+- [ ] Async support
+- [ ] Better performance benchmarks
+
+
 ## Installing
 
 ```
