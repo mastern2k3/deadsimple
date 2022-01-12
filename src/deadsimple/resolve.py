@@ -6,17 +6,12 @@ from .exceptions import GeneratorClosureException, InvalidGeneratorFactoryExcpet
 
 
 def Depends(factory: Callable) -> Any:
-    return _Depends(factory=factory, lazy=False)
-
-
-def Lazy(factory: Callable) -> Any:
-    return _Depends(factory=factory, lazy=True)
+    return _Depends(factory=factory)
 
 
 @dataclass(frozen=True)
 class _Depends:
     factory: Callable
-    lazy: bool
 
 
 @dataclass(frozen=True)
@@ -25,18 +20,8 @@ class _Context:
     open_generators: list
 
 
-TLazyValue = TypeVar("TLazyValue")
-
-
-@dataclass
-class _LazyResolver(Generic[TLazyValue]):
-
-    factory: Callable[..., TLazyValue]
-    context: _Context
-
-    @property
-    def lazy(self) -> TLazyValue:
-        return _resolve(self.factory, self.context)
+def get_context() -> _Context:
+    raise NotImplementedError("get_context is an abstract dependency")
 
 
 _resolver_cache: Dict[Callable, Callable[[_Context], Any]] = {}
@@ -56,6 +41,8 @@ def resolve(factory: Callable[..., TReturn], overrides: dict = None) -> TReturn:
         resolved_cache=resolved_cache,
         open_generators=[],
     )
+
+    resolved_cache[get_context] = context
 
     resolve_exception = None
 
@@ -129,14 +116,6 @@ def _resolve(factory: Callable[..., TReturn], context: _Context) -> TReturn:
         dependencies = {}
 
         for name, depends in dependency_factories:
-
-            if depends.lazy:
-                dependencies[name] = _LazyResolver(
-                    factory=depends.factory,
-                    context=_context,
-                )
-                continue
-
             dependencies[name] = _resolve(depends.factory, _context)
 
         value = factory(**dependencies)

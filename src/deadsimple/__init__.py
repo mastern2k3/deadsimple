@@ -1,2 +1,3 @@
-from .resolve import resolve, Depends, Lazy
+from .resolve import resolve, Depends
+from .lazy import Lazy
 from .exceptions import GeneratorClosureException, InvalidGeneratorFactoryExcpetion
