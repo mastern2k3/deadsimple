@@ -1,4 +1,4 @@
-# Conditional Dependencies
+# Conditional dependencies
 
 Some logic require dependencies only under specific cases.
 

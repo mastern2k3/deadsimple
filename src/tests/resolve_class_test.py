@@ -1,7 +1,5 @@
 from __future__ import annotations
-from functools import partial
 from dataclasses import dataclass
-from typing import Any
 from deadsimple import Depends, resolve
 
 

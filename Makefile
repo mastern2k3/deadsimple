@@ -23,3 +23,7 @@ benchmark:
 
 publish:
 	poetry publish --build
+
+
+docs-serve:
+	mkdocs serve

@@ -1,4 +1,4 @@
-# deadsimple
+# Overview
 
 deadsimple was created to replicate the simplicity of [FastAPI]'s dependency
 injection mechanisms outside of the web framework's context.
@@ -10,7 +10,7 @@ An additional goal of this project is to provide example design patterns that
 worked well for me using FastAPI's DI and describe them extensively.
 
 
-## Basic use
+## Basic usage
 
 ```python
 from dataclasses import dataclass
