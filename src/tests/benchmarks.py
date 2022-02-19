@@ -55,13 +55,17 @@ if __name__ == "__main__":
     from sys import argv
 
     if len(argv) <= 1:
+        get_a_hardcoded()
+        get_a_with_resolver()
         run_hardcoded()
         run_with_resolver()
 
     elif argv[1] == "hardcoded":
+        get_a_hardcoded()
         run_hardcoded()
 
     elif argv[1] == "resolver":
+        get_a_with_resolver()
         run_with_resolver()
 
     elif argv[1] == "profile-resolver":
@@ -79,4 +83,4 @@ if __name__ == "__main__":
         run("run_hardcoded()")
 
     else:
-        raise ValueError("Benchmarks can only be run for hardcoded or resolver")
+        raise ValueError(f"Unknown benchmark command `{argv[1]}`")
