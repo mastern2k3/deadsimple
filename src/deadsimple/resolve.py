@@ -1,11 +1,14 @@
-from typing import Callable, Dict, Generic, Optional, TypeVar, Any
+from typing import Callable, Dict, Optional, TypeVar, Any
 from dataclasses import dataclass
 from inspect import signature, isgeneratorfunction, Parameter
 
 from .exceptions import GeneratorClosureException, InvalidGeneratorFactoryExcpetion
 
 
-def Depends(factory: Callable) -> Any:
+TReturn = TypeVar("TReturn")
+
+
+def Depends(factory: Callable[..., TReturn]) -> TReturn:
     return _Depends(factory=factory)
 
 
@@ -25,9 +28,6 @@ def get_context() -> _Context:
 
 
 _resolver_cache: Dict[Callable, Callable[[_Context], Any]] = {}
-
-
-TReturn = TypeVar("TReturn")
 
 
 def resolve(factory: Callable[..., TReturn], overrides: dict = None) -> TReturn:
