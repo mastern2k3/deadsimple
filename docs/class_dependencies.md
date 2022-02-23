@@ -95,7 +95,7 @@ def get_dep_a(dep_b = Depends(get_dep_b)) -> DepA:
 
     try:
         dep_a.open()
-        yield dep_b
+        yield dep_a
     finally:
         dep_a.close()
 ```
