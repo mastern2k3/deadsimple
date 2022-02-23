@@ -149,6 +149,27 @@ resolve(get_dep_a)
 # enter b
 ```
 
+Controlled dependency lifetime scope:
+
+```python
+from deadsimple import resolve_open
+
+
+def get_dep_b() -> DepB:
+    print("enter b")
+    yield DepB(value="some val")
+    print("exit b")
+
+
+with resolve_open(get_dep_b) as dep_b:
+    print("inside")
+
+# prints:
+# enter b
+# inside
+# exit b
+```
+
 
 ## Todo
 
