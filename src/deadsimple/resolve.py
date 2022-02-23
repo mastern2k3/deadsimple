@@ -24,7 +24,9 @@ class _Context:
 
 
 def get_context() -> _Context:
-    raise NotImplementedError("get_context is an abstract dependency")
+    raise NotImplementedError(
+        "get_context is an abstract dependency and is only avaliable during injection"
+    )
 
 
 _resolver_cache: Dict[Callable, Callable[[_Context], Any]] = {}
@@ -32,17 +34,7 @@ _resolver_cache: Dict[Callable, Callable[[_Context], Any]] = {}
 
 def resolve(factory: Callable[..., TReturn], overrides: dict = None) -> TReturn:
 
-    if overrides is not None:
-        resolved_cache = overrides
-    else:
-        resolved_cache = {}
-
-    context = _Context(
-        resolved_cache=resolved_cache,
-        open_generators=[],
-    )
-
-    resolved_cache[get_context] = context
+    context = _create_context(overrides)
 
     resolve_exception = None
 
@@ -56,6 +48,23 @@ def resolve(factory: Callable[..., TReturn], overrides: dict = None) -> TReturn:
             _close_open_generators(context, resolve_exception)
 
     return value
+
+
+def _create_context(overrides: dict = None) -> _Context:
+
+    resolved_cache = {}
+
+    context = _Context(
+        resolved_cache=resolved_cache,
+        open_generators=[],
+    )
+
+    resolved_cache[get_context] = context
+
+    if overrides is not None:
+        resolved_cache.update(overrides)
+
+    return context
 
 
 def _close_open_generators(context: _Context, resolve_exception: Optional[Exception]):
