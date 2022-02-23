@@ -11,22 +11,18 @@ from deadsimple import Depends, resolve
 
 @dataclass
 class DepB:
-    value: str
-
-
-def get_dep_b() -> DepB:
-    return DepB(value="some val")
+    value: str = "some val"
 
 
 @dataclass
 class DepA:
-    dep_b: DepB = Depends(get_dep_b)
+    dep_b: DepB = Depends(DepB)
 
 
 @dataclass
 class DepC:
     dep_a: DepA = Depends(DepA)
-    dep_b: DepB = Depends(get_dep_b)
+    dep_b: DepB = Depends(DepB)
 
 
 dep = resolve(DepC)
@@ -47,11 +43,10 @@ Simply declare the factory as an alias to the class name:
 ```python
 @dataclass
 class DepB:
-    value: str
+    value: str = "some val"
 
 
-def get_dep_b() -> DepB:
-    return DepB(value="some val")
+get_dep_b = DepB
 
 
 @dataclass
@@ -100,4 +95,4 @@ def get_dep_a(dep_b = Depends(get_dep_b)) -> DepA:
         dep_a.close()
 ```
 
-This without going back and changing all instances of `Depends(...)`.
+Without going back and changing all instances of `Depends(...)`.
